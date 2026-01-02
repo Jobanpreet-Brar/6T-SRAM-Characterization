@@ -1,3 +1,4 @@
+
 import math
 import numpy as np
 import pandas as pd
@@ -148,8 +149,8 @@ def print_snm_report(title, res):
 
     
 if __name__ == "__main__":
-    hold_csv = "Butterfly_hold.csv"
-    read_csv = "Butterfly_read_Qb_0.csv"
+    hold_csv = "data/Butterfly_hold.csv"
+    read_csv = "data/Butterfly_read_Qb_0.csv"
 
     hold = compute_snm_from_butterfly_csv(hold_csv, vdd=1.8)
     read = compute_snm_from_butterfly_csv(read_csv, vdd=1.8)
