@@ -1,5 +1,27 @@
-# 6T SRAM Bitcell Characterization  
-**Transient read/write validation + HSNM/RSNM (butterfly curves) + Python SNM extractor**
+# 6T SRAM Bitcell Characterization (180 nm, Cadence Virtuoso)
+
+**What I did:** Implemented a 6T SRAM bitcell testbench and quantified stability using SNM (butterfly curves) + validated transient read/write behavior. Automated HSNM/RSNM extraction from CSV using a custom Python max-square extractor.
+
+## Results snapshot (TT @ 27°C, VDD = 1.8 V)
+| Metric | Value | How measured |
+|---|---:|---|
+| Hold SNM (HSNM) | 0.631 V | Butterfly curve (WL=0), max-square |
+| Read SNM (RSNM) | 0.356 V | Butterfly curve under read disturb (WL=1 + precharged BL/BLB), max-square |
+
+Key takeaway: **RSNM < HSNM** due to read disturb from connecting storage nodes to precharged bitlines during WL assertion.
+
+## Artifacts in this repo
+- Transient waveforms: **write ‘0’**, **read**  
+- Butterfly curves: **HSNM**, **RSNM** with max-square annotations  
+- PVT visualization: VTC/DC response shift across corners/temperature  
+- Python tool: `codes/snm_from_csv.py` (CSV → SNM + square corner points)
+
+## Repo structure
+
+-figures/   -> all plots/screenshots used in this README.  
+-codes/     -> python SNM extractor.  
+-README.  
+-LICENSE
 
 ---
 
