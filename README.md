@@ -1,27 +1,26 @@
 # 6T SRAM Bitcell Characterization (180 nm, Cadence Virtuoso)
 
-**What I did:** Implemented a 6T SRAM bitcell testbench and quantified stability using SNM (butterfly curves) + validated transient read/write behavior. Automated HSNM/RSNM extraction from CSV using a custom Python max-square extractor.
+**What I did:** Built a 6T SRAM bitcell testbench in Cadence Virtuoso, validated transient read/write behavior, and quantified stability using butterfly-curve SNM. Automated **HSNM/RSNM** extraction from CSV using a custom Python **max-square** extractor.
 
 ## Results snapshot (TT @ 27°C, VDD = 1.8 V)
+
 | Metric | Value | How measured |
 |---|---:|---|
-| Hold SNM (HSNM) | 0.631 V | Butterfly curve (WL=0), max-square |
+| Hold SNM (HSNM) | 0.631 V | Butterfly curve at hold (WL=0), max-square |
 | Read SNM (RSNM) | 0.356 V | Butterfly curve under read disturb (WL=1 + precharged BL/BLB), max-square |
 
-Key takeaway: **RSNM < HSNM** due to read disturb from connecting storage nodes to precharged bitlines during WL assertion.
+Key takeaway: **RSNM < HSNM** due to read disturb when storage nodes connect to precharged bitlines during WL assertion.
 
 ## Artifacts in this repo
-- Transient waveforms: **write ‘0’**, **read**  
-- Butterfly curves: **HSNM**, **RSNM** with max-square annotations  
-- PVT visualization: VTC/DC response shift across corners/temperature  
+- Transient waveforms: **write ‘0’**, **read**
+- Butterfly curves: **HSNM**, **RSNM** with max-square annotations
+- PVT visualization: VTC/DC response shift across corners/temperature
 - Python tool: `codes/snm_from_csv.py` (CSV → SNM + square corner points)
 
 ## Repo structure
-
--figures/   -> all plots/screenshots used in this README.  
--codes/     -> python SNM extractor.  
--README.  
--LICENSE
+- `figures/` → plots/screenshots used in this README  
+- `codes/` → Python SNM extractor  
+- `README.md`, `LICENSE`
 
 ---
 
@@ -74,8 +73,8 @@ The inverter **Voltage Transfer Characteristic (VTC)** tells you:
 - **BLen**: bitline precharge control (as implemented in the schematic)
   - Used to precharge BL/BLbar before read (and between operations)
 
-> The exact polarity of BLen depends on how your precharge PMOS gates are wired.
-> In *this* testbench behavior (from waveforms), **precharge happens when BLen is LOW**.
+> The exact polarity of BLen depends on how your precharge PMOS gates are wired.  
+> In this testbench behavior (from waveforms), **precharge happens when BLen is LOW**.
 
 ---
 
@@ -119,10 +118,9 @@ Typical read sequence:
 
 ## 5) Simulation setup (Cadence Virtuoso)
 
-
 ### 5.1 Tools / conditions used
 - **Cadence Virtuoso + Spectre**
-- **PDK : 180 nm**
+- **PDK: 180 nm**
 - **VDD = 1.8 V**
 - **Corner/Temp baseline:** **TT @ 27°C** (as shown in the SNM figures)
 - Additional PVT sweeps included for VTC shift visualization
@@ -133,11 +131,10 @@ SRAM is a cross-coupled positive feedback system. Without guidance, the simulato
 - fail DC convergence
 - start in the “wrong” stored state for a transient test
 
-**What I used :**
+**What I used:**
 - **Initial conditions (IC)** on **Q/Qb** to force a known stored state before applying WL/bitline activity  
   Example: to start with Q=1, Qb=0 → set IC accordingly.
-- Used **Node set** inside Convergence Aids option to help the simulator converge for DC/butterfly setups.
-
+- **Node set** (Convergence Aids) to help Spectre converge for DC/butterfly setups.
 
 ### 5.3 DC sweep configuration (for VTC and butterfly data export)
 The butterfly curve is created from DC relationships between the two internal nodes. The setup used is captured here:
@@ -147,7 +144,7 @@ The butterfly curve is created from DC relationships between the two internal no
 
 ---
 
-## 6) SNM results (TT, 27°C, VDD=1.8 V)
+## 6) SNM results (TT, 27°C, VDD = 1.8 V)
 
 ### 6.1 Hold SNM (HSNM)
 ![HSNM butterfly curve](figures/06_butterfly_hsnm_tt27.png)  
@@ -173,13 +170,11 @@ The butterfly curve is created from DC relationships between the two internal no
 What this means in practice:
 - Trip point shifts → read/write balance shifts
 - Noise margin changes → stability changes
-- This is the reason SRAM design talks about **corner sign-off**, not a single plot
+- This is why SRAM talks about **corner sign-off**, not a single plot
 
 ---
 
 ## 8) Python SNM extractor (CSV → HSNM/RSNM)
-
-**You can export raw data and compute the metric independently.**
 
 ### 8.1 What the script does
 `codes/snm_from_csv.py`:
